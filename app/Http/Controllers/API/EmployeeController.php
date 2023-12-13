@@ -140,7 +140,10 @@ class EmployeeController extends Controller
             // Get employee
             $employee = Employee::find($id);
 
-            // TODO: Check if employee is owned by user
+            // Check if employee is owned by user
+            if ($employee->company_id != Auth::user()->company_id) {
+                throw new Exception('Employee not found');
+            }
             
             // Check if employee exists
             if (!$employee) {
@@ -150,7 +153,10 @@ class EmployeeController extends Controller
             // Delete employee
             $employee->delete();
 
-            // TODO: Delete photo
+            // Delete photo
+            if ($employee->photo) {
+                Storage::delete($employee->photo);
+            }
 
             return ResponseFormatter::success($employee, 'Employee deleted');
         } catch (Exception $e) {

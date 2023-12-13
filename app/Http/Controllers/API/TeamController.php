@@ -105,7 +105,10 @@ class TeamController extends Controller
             // Get team
             $team = Team::find($id);
 
-            // TODO: Check if team is owned by user
+            // Check if team is owned by user
+            if ($team->company_id !== Auth::user()->company_id) {
+                throw new Exception('Unauthorized');
+            }
             
             // Check if team exists
             if (!$team) {
@@ -115,7 +118,10 @@ class TeamController extends Controller
             // Delete team
             $team->delete();
 
-            // TODO: Delete icon
+            // Delete icon
+            if ($team->icon) {
+                Storage::delete($team->icon);
+            }
 
             return ResponseFormatter::success($team, 'Team deleted');
         } catch (Exception $e) {

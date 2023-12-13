@@ -97,7 +97,10 @@ class RoleController extends Controller
             // Get role
             $role = Role::find($id);
 
-            // TODO: Check if role is owned by user
+            // Check if role is owned by user
+            if ($role->company_id != Auth::user()->company_id) {
+                throw new Exception('Role not found');
+            }
             
             // Check if role exists
             if (!$role) {
